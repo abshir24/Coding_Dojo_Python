@@ -1,0 +1,68 @@
+<h1>Hello {% for user in user %}{{user.first_name}}{% endfor %}</h1>
+
+<h2>Your Wish List: </h2>
+
+<table>
+  <thead>
+    <th>Item</th>
+    <th>Added by</th>
+    <th>Date Added</th>
+    <th>Action</th>
+  </thead>
+
+  <tbody>
+    {% for wishlist in MyWishlist %}
+      {% for item in wishlist.items.all %}
+      <tr>
+        <td>{{item.item}}</td>
+        <td>{{item.user.first_name}}</td>
+        <td>{{item.created_at}}</td>
+        {% if item.user.id == request.session.user_id %}
+          <td><a href="{% url 'item:delete' id=item.id %}">Delete</a></td>
+        {% else %}
+            <td><a href="#"> Remove item from my wishlist</a></td>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+      </tr>
+  </tbody>
+
+  </table>
+
+
+<h2>Other Users' Wish List</h2>
+
+<table>
+  <thead>
+    <th>Item</th>
+    <th>Added by</th>
+    <th>Date Added</th>
+    <th>Action</th>
+  </thead>
+
+  <tbody>
+    {% for wishlist in all_wishlists %}
+      {% for item in wishlist.items.all %}
+        {% for wishlist2 in MyWishlist %}
+          {% for item2 in wishlist2.items.all %}
+            {% if not item.id == item2.id %}
+              {% if not item.user.id == request.session.user_id %}
+                  <tr>
+                    <td>{{item.item}}</td>
+                    <td>{{item.user.first_name}}</td>
+                    <td>{{item.created_at}}</td>
+                    <td><a href="{% url 'main:additem' id=item.id %}">Add item to wishlist</a></td>
+                  </tr>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+      {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'item:index' %}">Add</a>
+<form class="" action="{% url 'logreg:logout' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" name="" value="Logout">
+</form>
